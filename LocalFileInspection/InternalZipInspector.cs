@@ -37,7 +37,7 @@ namespace AutoUpdatingPlugin
                         }
                         else
                         {
-                            MelonLoader.MelonLogger.Msg("Found BuildInfo.json\n" + text);
+                            Logger.Msg("Found BuildInfo.json\n" + text);
                             return JsonAnalyzer.GetBuildInfoFromJson(text, Path.Combine(zipFilePath, internalPath));
                         }
                     }
