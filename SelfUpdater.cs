@@ -33,15 +33,15 @@ namespace AutoUpdatingPlugin
                 var data = JSON.Load(apiResponse) as ProxyObject;
 
                 string version = data["Version"];
-                Logger.Msg(version);
                 if ((VersionData) BuildInfo.Version >= (VersionData) version)
                 {
-
-                    Logger.Msg("The Auto Updating Plugin is up-to-date.");
+                    Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is up-to-date.");
                 }
                 else
                 {
-                    Logger.Msg("The Auto Updating Plugin is out-dated. Updating now...");
+                    Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is out-dated. Updating now to ({version})...");
+                    string downloadLink = data["Download"];
+                    if (string.IsNullOrWhiteSpace(downloadLink)) downloadLink = DownloadURL;
                     string path = FileUtils.GetPathSelf();
                     Logger.Msg(path);
                     try
@@ -64,7 +64,7 @@ namespace AutoUpdatingPlugin
                             };
                             downloading = true;
                             buffer = null;
-                            client.DownloadDataAsync(new Uri(DownloadURL));
+                            client.DownloadDataAsync(new Uri(downloadLink));
 
                             while (downloading)
                                 Thread.Sleep(50);

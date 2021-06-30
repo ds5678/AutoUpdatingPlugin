@@ -18,4 +18,3 @@ using BuildInfo = AutoUpdatingPlugin.BuildInfo;
 [assembly: AssemblyFileVersion(BuildInfo.Version)]
 [assembly: MelonInfo(typeof(AutoUpdatingPlugin.Implementation), BuildInfo.Name, BuildInfo.Version, BuildInfo.Author, BuildInfo.DownloadLink)]
 [assembly: MelonGame("Hinterland", "TheLongDark")]
-[assembly: MelonOptionalDependencies("Mono.Cecil")]

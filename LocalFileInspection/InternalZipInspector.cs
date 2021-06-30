@@ -37,14 +37,14 @@ namespace AutoUpdatingPlugin
                         }
                         else
                         {
-                            Logger.Msg("Found BuildInfo.json\n" + text);
+                            //Logger.Msg("Found BuildInfo.json\n" + text);
                             return JsonAnalyzer.GetBuildInfoFromJson(text, Path.Combine(zipFilePath, internalPath));
                         }
                     }
                 }
             }
 
-            Logger.Warning($"Cannot identify version because there is no BuildInfo.json in {zipFilePath}");
+            Logger.Msg($"Cannot identify version because there is no BuildInfo.json in {zipFilePath}");
             return new BuildInfoDetail();
         }
         internal static Encoding GetEncoding(MemoryStream memoryStream)
