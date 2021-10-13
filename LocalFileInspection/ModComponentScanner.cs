@@ -7,11 +7,11 @@ namespace AutoUpdatingPlugin
     {
         internal static void ScanForModComponentFiles()
         {
-            string basedirectory = FileUtils.GetModComponentZipsFolder();
+            string basedirectory = FileUtils.GetModsFolder();
 
             if (!Directory.Exists(basedirectory))
             {
-                Logger.Msg("No ModComponentZips folder. Creating...");
+                Logger.Msg("No Mods folder. Creating...");
                 Directory.CreateDirectory(basedirectory);
                 return;
             }

@@ -17,11 +17,7 @@ namespace AutoUpdatingPlugin
         {
             if (string.IsNullOrWhiteSpace(link)) throw new ArgumentException("Invalid link argument");
 
-            if (link.EndsWith(".modcomponent") || link.EndsWith(".modscene"))
-            {
-                return Path.Combine(GetModComponentZipsFolder(), Path.GetFileName(link));
-            }
-            else return Path.Combine(GetModsFolder(), Path.GetFileName(link));
+            return Path.Combine(GetModsFolder(), Path.GetFileName(link));
         }
 
         internal static string GetPathSelf()
