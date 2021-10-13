@@ -15,29 +15,11 @@ namespace AutoUpdatingPlugin
         }
         private static void ExtractZipFile(string zipFilePath)
         {
-            var fileStream = File.OpenRead(zipFilePath);
-            var zipInputStream = new ZipInputStream(fileStream);
-            ZipEntry entry;
-            while ((entry = zipInputStream.GetNextEntry()) != null)
-            {
-                string internalPath = entry.Name;
-
-                using (var unzippedFileStream = new MemoryStream())
-                {
-                    int size = 0;
-                    byte[] buffer = new byte[4096];
-                    while (true)
-                    {
-                        size = zipInputStream.Read(buffer, 0, buffer.Length);
-                        if (size > 0)
-                            unzippedFileStream.Write(buffer, 0, size);
-                        else
-                            break;
-                    }
-                    string fullPath = Path.Combine(Path.GetDirectoryName(zipFilePath), internalPath);
-                    File.WriteAllBytes(fullPath, unzippedFileStream.ToArray());
-                }
-            }
+            string targetDir = Path.GetDirectoryName(zipFilePath);
+            FastZip fastZip = new FastZip();
+            string fileFilter = null;
+            // Will always overwrite if target filenames already exist
+            fastZip.ExtractZip(zipFilePath, targetDir, fileFilter);
             File.Delete(zipFilePath);
         }
     }
