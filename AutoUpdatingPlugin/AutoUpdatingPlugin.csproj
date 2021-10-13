@@ -64,12 +64,5 @@
     <Compile Include="DataContainers\VersionData.cs" />
     <Compile Include="Utils\ZipFileHandler.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-    <None Include="Version.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LICENSE" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
