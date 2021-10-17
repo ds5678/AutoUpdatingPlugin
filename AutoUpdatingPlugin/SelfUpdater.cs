@@ -14,83 +14,102 @@ namespace AutoUpdatingPlugin
         internal static void CheckVersion()
         {
             Logger.Msg("Fetching updater version data...");
-            string apiResponse = "";
-            using (var client = new WebClient())
-            {
-                client.Headers["User-Agent"] = "AutoUpdatingPlugin";
-                Logger.Msg("Attempting to download from API site...");
-                apiResponse = client.DownloadString(VersionURL);
-            }
+            string apiResponse = GetVersionJsonText();
 
             if (string.IsNullOrWhiteSpace(apiResponse))
             {
                 Logger.Error("Failed to download the data.");
+                return;
             }
-            else
+
+            Logger.Msg("Downloaded from the repository. Attempting to parse data...");
+
+            var data = JSON.Load(apiResponse) as ProxyObject;
+
+            string version = data["Version"];
+            if ((VersionData)BuildInfo.Version >= (VersionData)version)
             {
-                Logger.Msg("Downloaded from the repository. Attempting to parse data...");
+                Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is up-to-date.");
+                return;
+            }
 
-                var data = JSON.Load(apiResponse) as ProxyObject;
-
-                string version = data["Version"];
-                if ((VersionData) BuildInfo.Version >= (VersionData) version)
+            Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is out-dated. Updating now to ({version})...");
+            string downloadLink = data["Download"];
+            if (string.IsNullOrWhiteSpace(downloadLink)) 
+                downloadLink = DownloadURL;
+            string path = FileUtils.GetPathSelf();
+            Logger.Msg(path);
+            try
+            {
+                if (TryDownloadFile(downloadLink, out byte[] bytes))
                 {
-                    Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is up-to-date.");
+                    if(!TrySaveDataToFile(path, bytes))
+					{
+                        return;//Failed to save the updated version, so don't end the program.
+                    }
+                    Logger.Msg("The Auto Updating Plugin has been successfully updated. The game must be relaunched for these changes to take effect.");
+                    EndProgram();
                 }
-                else
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Failed to update the Auto Updating Plugin:\n" + e);
+            }
+        }
+
+        private static string GetVersionJsonText()
+		{
+            string apiResponse = "";
+            using (var client = new WebClient())
+            {
+                client.Headers["User-Agent"] = "AutoUpdatingPlugin";
+                Logger.Msg("Attempting to get version information from the repository...");
+                apiResponse = client.DownloadString(VersionURL);
+            }
+            return apiResponse;
+        }
+
+        private static bool TryDownloadFile(string downloadLink, out byte[] data)
+		{
+            bool errored = false;
+            using (var client = new WebClient())
+            {
+                bool downloading;
+                byte[] buffer;
+                client.DownloadDataCompleted += (sender, e) =>
                 {
-                    Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is out-dated. Updating now to ({version})...");
-                    string downloadLink = data["Download"];
-                    if (string.IsNullOrWhiteSpace(downloadLink)) downloadLink = DownloadURL;
-                    string path = FileUtils.GetPathSelf();
-                    Logger.Msg(path);
-                    try
+                    if (e.Error != null)
                     {
-                        bool errored = false;
-                        using (var client = new WebClient())
-                        {
-                            bool downloading;
-                            byte[] buffer;
-                            client.DownloadDataCompleted += (sender, e) =>
-                            {
-                                if (e.Error != null)
-                                {
-                                    Logger.Error("Failed to download a newer version of the Auto Updating Plugin:\n" + e.Error);
-                                    errored = true;
-                                }
-                                else buffer = e.Result;
-
-                                downloading = false;
-                            };
-                            downloading = true;
-                            buffer = null;
-                            client.DownloadDataAsync(new Uri(downloadLink));
-
-                            while (downloading)
-                                Thread.Sleep(50);
-
-
-                            if (!errored)
-                            {
-                                try
-                                {
-                                    File.WriteAllBytes(path, buffer);
-                                }
-                                catch (Exception e)
-                                {
-                                    Logger.Error("Failed to save replacement files for a newer version of the Auto Updating Plugin:\n" + e);
-                                    return;
-                                }
-                            }
-                        }
-                        Logger.Msg("The Auto Updating Plugin has been successfully updated. The game must be relaunched for these changes to take effect.");
-                        EndProgram();
+                        Logger.Error("Failed to download a newer version of the Auto Updating Plugin:\n" + e.Error);
+                        errored = true;
                     }
-                    catch (Exception e)
-                    {
-                        Logger.Error("Failed to update the Auto Updating Plugin:\n" + e);
-                    }
-                }
+                    else buffer = e.Result;
+
+                    downloading = false;
+                };
+                downloading = true;
+                buffer = null;
+                client.DownloadDataAsync(new Uri(downloadLink));
+
+                while (downloading)
+                    Thread.Sleep(50);
+
+                data = buffer;
+            }
+            return !errored;
+        }
+
+        private static bool TrySaveDataToFile(string path, byte[] data)
+		{
+            try
+            {
+                File.WriteAllBytes(path, data);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Failed to save replacement files for a newer version of the Auto Updating Plugin:\n" + e);
+                return false;
             }
         }
 
