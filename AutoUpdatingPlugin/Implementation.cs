@@ -15,6 +15,13 @@ namespace AutoUpdatingPlugin
 
                 SelfUpdater.CheckVersion();
 
+                string unityVersion = MelonUtils.GetUnityVersion();
+                if ((VersionData)unityVersion < (VersionData)"2019.4.19")
+                {
+                    Logger.Msg($"Skipping mod updates because TLD is outdated. Unity Version: {unityVersion}");
+                    return;
+                }
+
                 ZipFileHandler.ExtractZipFilesInDirectory(FileUtils.GetModsFolder());
 
                 APIList.FetchRemoteMods();
@@ -36,5 +43,7 @@ namespace AutoUpdatingPlugin
                 Logger.Error("Failed to update mods:\n" + e);
             }
         }
+
+
     }
 }
