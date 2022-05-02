@@ -7,7 +7,7 @@ namespace AutoUpdatingPlugin
     {
         internal static void ScanForModComponentFiles()
         {
-            string basedirectory = FileUtils.GetModsFolder();
+            string basedirectory = FileUtils.ModsFolder;
 
             if (!Directory.Exists(basedirectory))
             {

@@ -29,10 +29,10 @@ namespace AutoUpdatingPlugin
             List<Tuple<InstalledModDetail, APIMod>> toUpdate = new List<Tuple<InstalledModDetail, APIMod>>();
             
             // List all installed mods that can be updated
-            foreach (var pair in IntersectedList.installedApiMods)
+            foreach (KeyValuePair<InstalledModDetail, APIMod> pair in IntersectedList.installedApiMods)
             {
-                var installedMod = pair.Key;
-                var remoteMod = pair.Value;
+				InstalledModDetail? installedMod = pair.Key;
+				APIMod? remoteMod = pair.Value;
                 if (installedMod.Outdated)
                 {
                     toUpdate.Add(new Tuple<InstalledModDetail, APIMod>(installedMod, remoteMod));
@@ -67,7 +67,7 @@ namespace AutoUpdatingPlugin
                 UpdateInstallation(installedMod, apiMod);
 
                 progressTotal = (int)((i + 1) / (double)toUpdateCount * 100);
-                MelonLogger.Msg($"Progress: {i + 1}/{toUpdateCount} -> {progressTotal}%");
+                Logger.Msg($"Progress: {i + 1}/{toUpdateCount} -> {progressTotal}%");
 
             }
 
@@ -80,7 +80,7 @@ namespace AutoUpdatingPlugin
             {
                 bool errored = false;
                 List<(string, byte[])> downloadedData = new List<(string, byte[])>();
-                using (var client = new WebClient())
+                using (WebClient? client = new WebClient())
                 {
                     bool downloading;
                     byte[] buffer;
@@ -96,7 +96,7 @@ namespace AutoUpdatingPlugin
 
                         downloading = false;
                     };
-                    foreach (var link in apiMod.downloadlinks)
+                    foreach (string? link in apiMod.downloadlinks)
                     {
                         downloading = true;
                         buffer = null;
@@ -112,11 +112,11 @@ namespace AutoUpdatingPlugin
                     {
                         try
                         {
-                            foreach (var oldFile in installedMod.files)
+                            foreach (InstalledFileDetail? oldFile in installedMod.files)
                             {
                                 File.Delete(oldFile.filepath);
                             }
-                            foreach (var modFile in downloadedData)
+                            foreach ((string, byte[]) modFile in downloadedData)
                             {
                                 File.WriteAllBytes(modFile.Item1, modFile.Item2);
                             }

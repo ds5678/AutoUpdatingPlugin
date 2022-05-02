@@ -13,7 +13,7 @@ namespace AutoUpdatingPlugin
             {
                 try
                 {
-                    var dict = JSON.Load(jsonText) as ProxyObject;
+					ProxyObject? dict = JSON.Load(jsonText) as ProxyObject;
 
                     TrySetString(dict, "Name", ref result.Name);
                     TrySetString(dict, "Version", ref result.Version);
@@ -32,7 +32,7 @@ namespace AutoUpdatingPlugin
 
         private static void TrySetString(ProxyObject dict, string key, ref string field)
         {
-            foreach (var pair in dict)
+            foreach (System.Collections.Generic.KeyValuePair<string, Variant> pair in dict)
             {
                 if (pair.Key == key) field = pair.Value;
             }

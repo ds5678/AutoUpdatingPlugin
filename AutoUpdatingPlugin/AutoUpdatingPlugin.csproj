@@ -1,68 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CF5EBA4D-26D9-43FD-9797-8A63514EFA5F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AutoUpdatingPlugin</RootNamespace>
-    <AssemblyName>AutoUpdatingPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="MelonLoader, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="API\APIList.cs" />
-    <Compile Include="API\APIReader.cs" />
-    <Compile Include="API\APIMod.cs" />
-    <Compile Include="DataContainers\BuildInfoDetail.cs" />
-    <Compile Include="DependencyHandler.cs" />
-    <Compile Include="JsonAnalyzer.cs" />
-    <Compile Include="LocalFileInspection\InstalledModList.cs" />
-    <Compile Include="LocalFileInspection\IntersectedList.cs" />
-    <Compile Include="Utils\Logger.cs" />
-    <Compile Include="LocalFileInspection\InternalZipInspector.cs" />
-    <Compile Include="LocalFileInspection\ModComponentScanner.cs" />
-    <Compile Include="ModUpdater.cs" />
-    <Compile Include="SelfUpdater.cs" />
-    <Compile Include="Properties\BuildInfo.cs" />
-    <Compile Include="LocalFileInspection\DllFileChecker.cs" />
-    <Compile Include="DataContainers\FailedUpdate.cs" />
-    <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="DataContainers\InstalledFileDetail.cs" />
-    <Compile Include="DataContainers\InstalledModDetail.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Implementation.cs" />
-    <Compile Include="Utils\UpdateUtils.cs" />
-    <Compile Include="Utils\VersionUtils.cs" />
-    <Compile Include="DataContainers\VersionData.cs" />
-    <Compile Include="Utils\ZipFileHandler.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netframework472;net6.0</TargetFrameworks>
+		<LangVersion>Latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AssetRipper.VersionUtilities" Version="1.2.1" />
+	  <PackageReference Include="HarmonyX" Version="2.9.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="MelonLoader">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>E:\Games\TLD400\MelonLoader\MelonLoader.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
 </Project>

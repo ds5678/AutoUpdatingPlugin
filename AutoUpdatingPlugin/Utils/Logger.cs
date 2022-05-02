@@ -1,12 +1,15 @@
-﻿using MelonLoader;
-
-namespace AutoUpdatingPlugin
+﻿namespace AutoUpdatingPlugin
 {
     internal static class Logger
     {
-        internal static void Msg(string message) => MelonLogger.Msg(message);
-        internal static void Msg(string message, params object[] parameters) => MelonLogger.Msg(message, parameters);
-        internal static void Warning(string message, params object[] parameters) => MelonLogger.Warning(message, parameters);
-        internal static void Error(string message, params object[] parameters) => MelonLogger.Error(message, parameters);
+#if NET6_0_OR_GREATER
+        internal static void Msg(string message) => System.Console.WriteLine($"Info: {message}");
+        internal static void Warning(string message) => System.Console.WriteLine($"Warning: {message}");
+        internal static void Error(string message) => System.Console.WriteLine($"Error: {message}");
+#else
+        internal static void Msg(string message) => MelonLoader.MelonLogger.Msg(message);
+        internal static void Warning(string message) => MelonLoader.MelonLogger.Warning(message);
+        internal static void Error(string message) => MelonLoader.MelonLogger.Error(message);
+#endif
     }
 }

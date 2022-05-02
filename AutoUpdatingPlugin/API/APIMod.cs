@@ -58,7 +58,7 @@ namespace AutoUpdatingPlugin
 
         internal void ValidateDependencies(string[] validDependencies)
         {
-            foreach (var dependency in dependencies)
+            foreach (string? dependency in dependencies)
             {
                 if (!validDependencies.Contains(dependency))
                 {

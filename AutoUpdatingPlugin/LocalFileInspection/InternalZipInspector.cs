@@ -8,40 +8,38 @@ namespace AutoUpdatingPlugin
     {
         internal static BuildInfoDetail InspectZipFile(string zipFilePath)
         {
-            //Logger.Msg("Reading zip file at: '{0}'", zipFilePath);
-            var fileStream = File.OpenRead(zipFilePath);
-            var zipInputStream = new ZipInputStream(fileStream);
+			//Logger.Msg("Reading zip file at: '{0}'", zipFilePath);
+			FileStream fileStream = File.OpenRead(zipFilePath);
+			ZipInputStream zipInputStream = new ZipInputStream(fileStream);
             ZipEntry entry;
             while ((entry = zipInputStream.GetNextEntry()) != null)
             {
                 string internalPath = entry.Name;
                 if (internalPath.ToLowerInvariant() == "buildinfo.json")
                 {
-                    using (var unzippedFileStream = new MemoryStream())
-                    {
-                        int size = 0;
-                        byte[] buffer = new byte[4096];
-                        while (true)
-                        {
-                            size = zipInputStream.Read(buffer, 0, buffer.Length);
-                            if (size > 0)
-                                unzippedFileStream.Write(buffer, 0, size);
-                            else
-                                break;
-                        }
-                        //Logger.Msg(unzippedFileStream.ToArray().Length.ToString());
-                        string text = ReadToString2(unzippedFileStream);
-                        if (text is null)
-                        {
-                            Logger.Error("text in InternalZipInspector was null");
-                        }
-                        else
-                        {
-                            //Logger.Msg("Found BuildInfo.json\n" + text);
-                            return JsonAnalyzer.GetBuildInfoFromJson(text, Path.Combine(zipFilePath, internalPath));
-                        }
-                    }
-                }
+					using MemoryStream unzippedFileStream = new MemoryStream();
+					int size = 0;
+					byte[] buffer = new byte[4096];
+					while (true)
+					{
+						size = zipInputStream.Read(buffer, 0, buffer.Length);
+						if (size > 0)
+							unzippedFileStream.Write(buffer, 0, size);
+						else
+							break;
+					}
+					//Logger.Msg(unzippedFileStream.ToArray().Length.ToString());
+					string text = ReadToString2(unzippedFileStream);
+					if (text is null)
+					{
+						Logger.Error("text in InternalZipInspector was null");
+					}
+					else
+					{
+						//Logger.Msg("Found BuildInfo.json\n" + text);
+						return JsonAnalyzer.GetBuildInfoFromJson(text, Path.Combine(zipFilePath, internalPath));
+					}
+				}
             }
 
             Logger.Msg($"Cannot identify version because there is no BuildInfo.json in {zipFilePath}");
@@ -49,12 +47,10 @@ namespace AutoUpdatingPlugin
         }
         internal static Encoding GetEncoding(MemoryStream memoryStream)
         {
-            using (var reader = new StreamReader(memoryStream, true))
-            {
-                reader.Peek();
-                return reader.CurrentEncoding;
-            }
-        }
+			using StreamReader reader = new StreamReader(memoryStream, true);
+			reader.Peek();
+			return reader.CurrentEncoding;
+		}
         internal static string ReadToString(MemoryStream memoryStream)
         {
             Encoding encoding = GetEncoding(memoryStream);
@@ -63,13 +59,11 @@ namespace AutoUpdatingPlugin
         }
         internal static string ReadToString2(MemoryStream memoryStream)
         {
-            using (var reader = new StreamReader(memoryStream, true))
-            {
-                //reader.Peek();
-                memoryStream.Position = 0;
-                //Logger.Msg(memoryStream.Position.ToString());
-                return reader.ReadToEnd();
-            }
-        }
+			using StreamReader reader = new StreamReader(memoryStream, true);
+			//reader.Peek();
+			memoryStream.Position = 0;
+			//Logger.Msg(memoryStream.Position.ToString());
+			return reader.ReadToEnd();
+		}
     }
 }

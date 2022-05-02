@@ -12,7 +12,7 @@ namespace AutoUpdatingPlugin
         private static void ValidateDependencies()
         {
             string[] modNames = APIList.GetModNames();
-            foreach (var remoteMod in IntersectedList.stringApiMods)
+            foreach (KeyValuePair<string, APIMod> remoteMod in IntersectedList.stringApiMods)
             {
                 remoteMod.Value.ValidateDependencies(modNames);
             }
@@ -21,7 +21,7 @@ namespace AutoUpdatingPlugin
         {
             string[] installedMods = InstalledModList.GetInstalledModNames();
             List<string> missingNames = new List<string>();
-            foreach (var remoteMod in IntersectedList.installedApiMods)
+            foreach (KeyValuePair<InstalledModDetail, APIMod> remoteMod in IntersectedList.installedApiMods)
             {
                 if (!remoteMod.Value.canCheckDependencies) continue;
 
@@ -49,7 +49,7 @@ namespace AutoUpdatingPlugin
 
             ValidateDependencies();
 
-            var toInstall = GetMissingDependencies();
+			APIMod[]? toInstall = GetMissingDependencies();
 
             Logger.Msg($"Found {toInstall.Length} missing dependencies.");
 
@@ -73,7 +73,7 @@ namespace AutoUpdatingPlugin
             {
                 bool errored = false;
                 List<(string, byte[])> downloadedData = new List<(string, byte[])>();
-                using (var client = new WebClient())
+                using (WebClient? client = new WebClient())
                 {
                     bool downloading;
                     byte[] buffer;
@@ -88,7 +88,7 @@ namespace AutoUpdatingPlugin
 
                         downloading = false;
                     };
-                    foreach (var link in apiMod.downloadlinks)
+                    foreach (string? link in apiMod.downloadlinks)
                     {
                         downloading = true;
                         buffer = null;
@@ -104,7 +104,7 @@ namespace AutoUpdatingPlugin
                     {
                         try
                         {
-                            foreach (var modFile in downloadedData)
+                            foreach ((string, byte[]) modFile in downloadedData)
                             {
                                 File.WriteAllBytes(modFile.Item1, modFile.Item2);
                             }

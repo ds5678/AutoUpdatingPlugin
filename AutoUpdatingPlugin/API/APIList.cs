@@ -17,7 +17,7 @@ namespace AutoUpdatingPlugin
         {
             Logger.Msg("Fetching remote mods...");
             string apiResponse = "";
-            using (var client = new WebClient())
+            using (WebClient? client = new WebClient())
             {
                 client.Headers["User-Agent"] = "AutoUpdatingPlugin";
                 Logger.Msg("Attempting to download from API site...");
@@ -65,21 +65,21 @@ namespace AutoUpdatingPlugin
         }
         internal static string GetNewModName(string currentName)
         {
-            return oldToNewModNames.TryGetValue(currentName, out string newName) ? newName : currentName;
+            return oldToNewModNames.TryGetValue(currentName, out string? newName) ? newName : currentName;
         }
         internal static bool IsAliasName(string currentName) => oldToNewModNames.ContainsKey(currentName);
 
         internal static string[] GetModNames() => supportedMods.Keys.ToArray();
         internal static string[] GetSortedModNames()
         {
-            var result = new List<string>(supportedMods.Keys.ToArray());
+			List<string>? result = new List<string>(supportedMods.Keys.ToArray());
             result.Sort();
             return result.ToArray();
         }
 
         internal static Dictionary<string, APIMod> SortedDictionary()
         {
-            var sortedDict = from entry in supportedMods orderby entry.Key ascending select entry;
+			IOrderedEnumerable<KeyValuePair<string, APIMod>>? sortedDict = from entry in supportedMods orderby entry.Key ascending select entry;
             return sortedDict.ToDictionary(pair => pair.Key, pair => pair.Value);
         }
     }

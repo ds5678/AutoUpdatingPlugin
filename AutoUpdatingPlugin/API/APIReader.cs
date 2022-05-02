@@ -1,4 +1,5 @@
 ﻿using MelonLoader.TinyJSON;
+using System;
 using System.Collections.Generic;
 
 namespace AutoUpdatingPlugin
@@ -12,13 +13,14 @@ namespace AutoUpdatingPlugin
 
             List<APIMod> result = new List<APIMod>();
 
-            var mods = JSON.Load(text) as ProxyObject;
+			ProxyObject mods = (ProxyObject)JSON.Load(text);
 
-            foreach (var mod in mods)
+            foreach (KeyValuePair<string, Variant> mod in mods)
             {
-                ProxyObject modData = mod.Value as ProxyObject;
+                ProxyObject modData = (ProxyObject)mod.Value;
                 APIMod apiMod = new APIMod();
                 apiMod.name = modData["Name"];
+                Logger.Msg(apiMod.name);
                 apiMod.version = (VersionData)(string)(modData["Version"]);
                 apiMod.aliases = MakeStringArray(modData["Aliases"] as ProxyArray);
                 apiMod.dependencies = MakeStringArray(modData["Dependencies"] as ProxyArray);
@@ -30,8 +32,13 @@ namespace AutoUpdatingPlugin
             return result.ToArray();
         }
 
-        public static string[] MakeStringArray(ProxyArray proxy)
+        public static string[] MakeStringArray(ProxyArray? proxy)
         {
+            if (proxy == null)
+            {
+                Logger.Warning("null proxy array");
+                return Array.Empty<string>();
+            }
             string[] result = new string[proxy.Count];
             for (int i = 0; i < proxy.Count; i++)
             {
@@ -40,24 +47,31 @@ namespace AutoUpdatingPlugin
             return result;
         }
 
-        public static string[] MakeDownloadArray(ProxyArray proxy)
+        public static string[] MakeDownloadArray(ProxyArray? proxy)
         {
+            if(proxy == null)
+                return Array.Empty<string>();
+
             List<string> result = new List<string>();
             for (int i = 0; i < proxy.Count; i++)
             {
                 string link = proxy[i];
-                if (IsCompatibleLink(link)) result.Add(link);
-                else return new string[0];
+                if (IsCompatibleLink(link)) 
+                    result.Add(link);
+                else 
+                    return new string[0];
             }
             return result.ToArray();
         }
 
-        public static bool IsCompatibleLink(string link)
+        public static bool IsCompatibleLink(string? link)
         {
-            if (string.IsNullOrWhiteSpace(link)) return false;
+            if (string.IsNullOrWhiteSpace(link)) 
+                return false;
             foreach (string fileType in compatibleFileTypes)
             {
-                if (link.EndsWith(fileType)) return true;
+                if (link.EndsWith(fileType)) 
+                    return true;
             }
             return false;
         }

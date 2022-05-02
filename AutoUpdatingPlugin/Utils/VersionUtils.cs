@@ -1,8 +1,6 @@
-﻿using System.Text.RegularExpressions;
-
-namespace AutoUpdatingPlugin
+﻿namespace AutoUpdatingPlugin
 {
-    internal static class VersionUtils
+	internal static class VersionUtils
     {
         public static VersionData GetMaxVersion(VersionData[] versions)
         {

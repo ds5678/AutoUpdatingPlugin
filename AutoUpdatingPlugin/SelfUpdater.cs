@@ -1,30 +1,30 @@
 ﻿using MelonLoader.TinyJSON;
 using System;
 using System.IO;
-using System.Net;
-using System.Threading;
 
 namespace AutoUpdatingPlugin
 {
-    internal static class SelfUpdater
+	internal static class SelfUpdater
     {
-        private const string DownloadURL = @"https://github.com/ds5678/AutoUpdatingPlugin/releases/latest/download/AutoUpdatingPlugin.dll";
-        private const string VersionURL = @"https://raw.githubusercontent.com/ds5678/AutoUpdatingPlugin/master/Version.json";
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         internal static void CheckVersion()
         {
             Logger.Msg("Fetching updater version data...");
-            string apiResponse = GetVersionJsonText();
+            Logger.Msg("Attempting to get version information from the repository...");
+            string apiResponse = InternetAccess.GetVersionJsonText();
 
             if (string.IsNullOrWhiteSpace(apiResponse))
             {
                 Logger.Error("Failed to download the data.");
                 return;
             }
-
+            
             Logger.Msg("Downloaded from the repository. Attempting to parse data...");
 
-            var data = JSON.Load(apiResponse) as ProxyObject;
+			ProxyObject? data = (ProxyObject)JSON.Load(apiResponse);
 
             string version = data["Version"];
             if ((VersionData)BuildInfo.Version >= (VersionData)version)
@@ -36,12 +36,12 @@ namespace AutoUpdatingPlugin
             Logger.Msg($"The Auto Updating Plugin ({BuildInfo.Version}) is out-dated. Updating now to ({version})...");
             string downloadLink = data["Download"];
             if (string.IsNullOrWhiteSpace(downloadLink)) 
-                downloadLink = DownloadURL;
+                downloadLink = InternetAccess.DownloadURL;
             string path = FileUtils.GetPathSelf();
             Logger.Msg(path);
             try
             {
-                if (TryDownloadFile(downloadLink, out byte[] bytes))
+                if (InternetAccess.TryDownloadFile(downloadLink, out byte[] bytes))
                 {
                     if(!TrySaveDataToFile(path, bytes))
 					{
@@ -55,48 +55,6 @@ namespace AutoUpdatingPlugin
             {
                 Logger.Error("Failed to update the Auto Updating Plugin:\n" + e);
             }
-        }
-
-        private static string GetVersionJsonText()
-		{
-            string apiResponse = "";
-            using (var client = new WebClient())
-            {
-                client.Headers["User-Agent"] = "AutoUpdatingPlugin";
-                Logger.Msg("Attempting to get version information from the repository...");
-                apiResponse = client.DownloadString(VersionURL);
-            }
-            return apiResponse;
-        }
-
-        private static bool TryDownloadFile(string downloadLink, out byte[] data)
-		{
-            bool errored = false;
-            using (var client = new WebClient())
-            {
-                bool downloading;
-                byte[] buffer;
-                client.DownloadDataCompleted += (sender, e) =>
-                {
-                    if (e.Error != null)
-                    {
-                        Logger.Error("Failed to download a newer version of the Auto Updating Plugin:\n" + e.Error);
-                        errored = true;
-                    }
-                    else buffer = e.Result;
-
-                    downloading = false;
-                };
-                downloading = true;
-                buffer = null;
-                client.DownloadDataAsync(new Uri(downloadLink));
-
-                while (downloading)
-                    Thread.Sleep(50);
-
-                data = buffer;
-            }
-            return !errored;
         }
 
         private static bool TrySaveDataToFile(string path, byte[] data)
@@ -116,7 +74,7 @@ namespace AutoUpdatingPlugin
         private static void EndProgram()
         {
             Logger.Msg("Ending Program in 10 seconds");
-            var x = new System.Diagnostics.Stopwatch();
+			System.Diagnostics.Stopwatch? x = new System.Diagnostics.Stopwatch();
             x.Start();
             while (x.ElapsedMilliseconds < 10000) { }
             System.Environment.Exit(1);

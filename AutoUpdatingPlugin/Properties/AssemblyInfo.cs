@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using BuildInfo = AutoUpdatingPlugin.BuildInfo;
 
@@ -16,5 +15,6 @@ using BuildInfo = AutoUpdatingPlugin.BuildInfo;
 
 [assembly: AssemblyVersion(BuildInfo.Version)]
 [assembly: AssemblyFileVersion(BuildInfo.Version)]
-[assembly: MelonInfo(typeof(AutoUpdatingPlugin.Implementation), BuildInfo.Name, BuildInfo.Version, BuildInfo.Author, BuildInfo.DownloadLink)]
-[assembly: MelonGame("Hinterland", "TheLongDark")]
+
+[assembly: MelonLoader.MelonInfo(typeof(AutoUpdatingPlugin.Implementation), BuildInfo.Name, BuildInfo.Version, BuildInfo.Author, BuildInfo.DownloadLink)]
+[assembly: MelonLoader.MelonGame("Hinterland", "TheLongDark")]

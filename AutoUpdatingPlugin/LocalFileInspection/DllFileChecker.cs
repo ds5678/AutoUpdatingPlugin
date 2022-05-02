@@ -9,7 +9,7 @@ namespace AutoUpdatingPlugin
     {
         internal static void ScanForDllFiles()
         {
-            string basedirectory = FileUtils.GetModsFolder();
+            string basedirectory = FileUtils.ModsFolder;
 
             if (!Directory.Exists(basedirectory))
             {
@@ -34,12 +34,12 @@ namespace AutoUpdatingPlugin
 
                     try
                     {
-                        string modName;
-                        string modVersion;
+                        string? modName;
+                        string? modVersion;
                         using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(filename, new ReaderParameters { ReadWrite = true }))
                         {
 
-                            CustomAttribute melonInfoAttribute = assembly.CustomAttributes.FirstOrDefault(a =>
+                            CustomAttribute? melonInfoAttribute = assembly.CustomAttributes.FirstOrDefault(a =>
                                 a.AttributeType.Name == "MelonModInfoAttribute" || a.AttributeType.Name == "MelonInfoAttribute");
 
                             if (melonInfoAttribute == null)
@@ -58,7 +58,7 @@ namespace AutoUpdatingPlugin
                             modName = newName;
                         }
 
-                        if (InstalledModList.installedMods.TryGetValue(modName, out InstalledModDetail installedModDetail))
+                        if (InstalledModList.installedMods.TryGetValue(modName, out InstalledModDetail? installedModDetail))
                         {
                             if (installedModDetail.files[0].version > (VersionData)modVersion)
                             {

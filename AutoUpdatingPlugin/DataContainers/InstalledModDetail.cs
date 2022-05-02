@@ -18,7 +18,7 @@ namespace AutoUpdatingPlugin
 
         private VersionData[] GetVersionList()
         {
-            var result = new VersionData[files.Count];
+			VersionData[]? result = new VersionData[files.Count];
             for (int i = 0; i < result.Length; i++)
             {
                 result[i] = files[i].version;
@@ -32,7 +32,7 @@ namespace AutoUpdatingPlugin
         /// </summary>
         public VersionData GetMinValidVersion()
         {
-            var versions = GetVersionList();
+			VersionData[]? versions = GetVersionList();
             if (versions is null || versions.Length == 0) return VersionData.ZERO;
 
             int currentMin = 0;

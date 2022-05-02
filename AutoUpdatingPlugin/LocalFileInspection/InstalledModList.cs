@@ -11,14 +11,14 @@ namespace AutoUpdatingPlugin
 
         internal static string[] GetSortedModNames()
         {
-            var result = new List<string>(installedMods.Keys.ToArray());
+			List<string>? result = new List<string>(installedMods.Keys.ToArray());
             result.Sort();
             return result.ToArray();
         }
 
         internal static Dictionary<string, InstalledModDetail> SortedDictionary()
         {
-            var sortedDict = from entry in installedMods orderby entry.Key ascending select entry;
+			IOrderedEnumerable<KeyValuePair<string, InstalledModDetail>>? sortedDict = from entry in installedMods orderby entry.Key ascending select entry;
             return sortedDict.ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
