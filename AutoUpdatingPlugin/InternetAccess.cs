@@ -20,34 +20,32 @@ namespace AutoUpdatingPlugin
             return apiResponse;
         }
 
-        internal static bool TryDownloadFile(string downloadLink, out byte[] data)
+        internal static bool TryDownloadFile(string downloadLink, out byte[]? data)
         {
             bool errored = false;
-            using (WebClient? client = new WebClient())
-            {
-                bool downloading;
-                byte[] buffer;
-                client.DownloadDataCompleted += (sender, e) =>
-                {
-                    if (e.Error != null)
-                    {
-                        Logger.Error("Failed to download a newer version of the Auto Updating Plugin:\n" + e.Error);
-                        errored = true;
-                    }
-                    else buffer = e.Result;
+			using WebClient? client = new WebClient();
+			bool downloading;
+			byte[]? buffer;
+			client.DownloadDataCompleted += (sender, e) =>
+			{
+				if (e.Error != null)
+				{
+					Logger.Error("Failed to download a newer version of the Auto Updating Plugin:\n" + e.Error);
+					errored = true;
+				}
+				else buffer = e.Result;
 
-                    downloading = false;
-                };
-                downloading = true;
-                buffer = null;
-                client.DownloadDataAsync(new Uri(downloadLink));
+				downloading = false;
+			};
+			downloading = true;
+			buffer = null;
+			client.DownloadDataAsync(new Uri(downloadLink));
 
-                while (downloading)
-                    Thread.Sleep(50);
+			while (downloading)
+				Thread.Sleep(50);
 
-                data = buffer;
-            }
-            return !errored;
-        }
+			data = buffer;
+			return !errored;
+		}
     }
 }

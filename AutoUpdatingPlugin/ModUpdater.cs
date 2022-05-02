@@ -11,7 +11,7 @@ namespace AutoUpdatingPlugin
     {
         public static int progressTotal = 0, progressDownload = 0;
         private static int toUpdateCount = 0;
-        private static List<FailedUpdateInfo> failedUpdates = new List<FailedUpdateInfo>();
+        private static readonly List<FailedUpdateInfo> failedUpdates = new List<FailedUpdateInfo>();
 
         private static void LogProgress()
         {
@@ -79,58 +79,56 @@ namespace AutoUpdatingPlugin
             try
             {
                 bool errored = false;
-                List<(string, byte[])> downloadedData = new List<(string, byte[])>();
-                using (WebClient? client = new WebClient())
-                {
-                    bool downloading;
-                    byte[] buffer;
-                    client.DownloadDataCompleted += (sender, e) =>
-                    {
-                        if (e.Error != null)
-                        {
-                            Logger.Error("Failed to download " + installedMod.name + ":\n" + e.Error);
-                            errored = true;
-                            failedUpdates.Add(new FailedUpdateInfo(installedMod, FailedUpdateReason.DownloadError, e.ToString()));
-                        }
-                        else buffer = e.Result;
+                List<(string, byte[]?)> downloadedData = new();
+				using WebClient client = new();
+				bool downloading;
+				byte[]? buffer;
+				client.DownloadDataCompleted += (sender, e) =>
+				{
+					if (e.Error != null)
+					{
+						Logger.Error("Failed to download " + installedMod.name + ":\n" + e.Error);
+						errored = true;
+						failedUpdates.Add(new FailedUpdateInfo(installedMod, FailedUpdateReason.DownloadError, e.ToString() ?? ""));
+					}
+					else buffer = e.Result;
 
-                        downloading = false;
-                    };
-                    foreach (string? link in apiMod.downloadlinks)
-                    {
-                        downloading = true;
-                        buffer = null;
-                        client.DownloadDataAsync(new Uri(link));
+					downloading = false;
+				};
+				foreach (string link in apiMod.downloadlinks)
+				{
+					downloading = true;
+					buffer = null;
+					client.DownloadDataAsync(new Uri(link));
 
-                        while (downloading)
-                            Thread.Sleep(50);
-                        downloadedData.Add((FileUtils.GetDestination(link), buffer));
-                    }
+					while (downloading)
+						Thread.Sleep(50);
+					downloadedData.Add((FileUtils.GetDestination(link), buffer));
+				}
 
 
-                    if (!errored)
-                    {
-                        try
-                        {
-                            foreach (InstalledFileDetail? oldFile in installedMod.files)
-                            {
-                                File.Delete(oldFile.filepath);
-                            }
-                            foreach ((string, byte[]) modFile in downloadedData)
-                            {
-                                File.WriteAllBytes(modFile.Item1, modFile.Item2);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Error("Failed to save replacement files for " + installedMod.name + ":\n" + e);
-                            failedUpdates.Add(new FailedUpdateInfo(installedMod, FailedUpdateReason.SaveError, e.ToString()));
-                            return;
-                        }
-                    }
-                }
+				if (!errored)
+				{
+					try
+					{
+						foreach (InstalledFileDetail oldFile in installedMod.files)
+						{
+							File.Delete(oldFile.filepath);
+						}
+						foreach ((string, byte[]?) modFile in downloadedData)
+						{
+							File.WriteAllBytes(modFile.Item1, modFile.Item2);
+						}
+					}
+					catch (Exception e)
+					{
+						Logger.Error("Failed to save replacement files for " + installedMod.name + ":\n" + e);
+						failedUpdates.Add(new FailedUpdateInfo(installedMod, FailedUpdateReason.SaveError, e.ToString()));
+						return;
+					}
+				}
 
-            }
+			}
             catch (Exception e)
             {
                 Logger.Error("Failed to update " + installedMod.name + ":\n" + e);
