@@ -1,8 +1,8 @@
 ﻿namespace AutoUpdatingPlugin
 {
 #if NET6_0_OR_GREATER
-    public static class Implementation
-    {
+	public static class Implementation
+	{
 #else
     internal sealed class Implementation : MelonLoader.MelonPlugin
     {
@@ -27,21 +27,21 @@
             }
         }
 #endif
-        public static void UpdateMods()
+		public static void UpdateMods()
 		{
-            ZipFileHandler.ExtractZipFilesInDirectory(FileUtils.ModsFolder);
+			ZipFileHandler.ExtractZipFilesInDirectory(FileUtils.ModsFolder);
 
-            APIList.FetchRemoteMods();
+			APIList.FetchRemoteMods();
 
-            InstalledModList.ScanModFolder();
+			InstalledModList.ScanModFolder();
 
-            IntersectedList.GenerateLists();
+			IntersectedList.GenerateLists();
 
-            ModUpdater.DownloadAndUpdateMods();
+			ModUpdater.DownloadAndUpdateMods();
 
-            DependencyHandler.InstallAllMissingDependencies();
+			DependencyHandler.InstallAllMissingDependencies();
 
-            ZipFileHandler.ExtractZipFilesInDirectory(FileUtils.ModsFolder);
-        }
-    }
+			ZipFileHandler.ExtractZipFilesInDirectory(FileUtils.ModsFolder);
+		}
+	}
 }

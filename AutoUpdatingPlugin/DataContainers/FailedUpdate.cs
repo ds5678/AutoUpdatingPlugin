@@ -1,23 +1,23 @@
 ﻿namespace AutoUpdatingPlugin
 {
-    internal enum FailedUpdateReason
-    {
-        Unknown,
-        DownloadError,
-        SaveError
-    }
+	internal enum FailedUpdateReason
+	{
+		Unknown,
+		DownloadError,
+		SaveError
+	}
 
-    internal class FailedUpdateInfo
-    {
-        public InstalledModDetail mod;
-        public FailedUpdateReason reason;
-        public string message;
+	internal class FailedUpdateInfo
+	{
+		public InstalledModDetail mod;
+		public FailedUpdateReason reason;
+		public string message;
 
-        public FailedUpdateInfo(InstalledModDetail mod, FailedUpdateReason reason, string message)
-        {
-            this.mod = mod;
-            this.reason = reason;
-            this.message = message;
-        }
-    }
+		public FailedUpdateInfo(InstalledModDetail mod, FailedUpdateReason reason, string message)
+		{
+			this.mod = mod;
+			this.reason = reason;
+			this.message = message;
+		}
+	}
 }
