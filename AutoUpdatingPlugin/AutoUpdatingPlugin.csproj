@@ -1,27 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netframework472;net6.0</TargetFrameworks>
+		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-	</PropertyGroup>
-
 	<ItemGroup>
-	  <PackageReference Include="AssetRipper.VersionUtilities" Version="1.2.1" />
-	  <PackageReference Include="HarmonyX" Version="2.9.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="MelonLoader">
-			<SpecificVersion>False</SpecificVersion>
-			<HintPath>E:\Games\TLD400\MelonLoader\MelonLoader.dll</HintPath>
-		</Reference>
+		<PackageReference Include="AssetRipper.VersionUtilities" Version="1.2.1" />
+		<PackageReference Include="HarmonyX" Version="2.10.1" />
+		<PackageReference Include="LavaGang.MelonLoader" Version="0.6.0" />
 	</ItemGroup>
 
 </Project>
